@@ -1,10 +1,38 @@
-- 👋 Hi, I’m @shiyam krishna
-- 👀 I’m interested in coding and trading right now
-- 🌱 I’m currently learning python programming
-- 💞️ I’m looking to collaborate on ...
-- 📫 How to reach me on shiyamkrishna12@gmail.com
+## Smart AI Trip Planner
 
-<!---
-me is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+A simple FastAPI-based project that creates day-by-day itineraries from a sample Points-of-Interest dataset with adjustable preferences, plus ICS calendar export and a lightweight static UI.
+
+### Quickstart
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Open `http://localhost:8000/` to use the UI.
+
+### API
+
+- `GET /health` – health check
+- `POST /api/plan` – body is `TripRequest`, returns `TripPlan`
+- `POST /api/plan.ics` – body is `TripRequest`, returns ICS text
+
+Minimal `TripRequest` example:
+
+```json
+{
+  "city": "Paris",
+  "start_date": "2025-05-01",
+  "end_date": "2025-05-02",
+  "preferences": { "pace": "balanced", "categories": ["landmark","museum","park"], "start_time": "09:00", "end_time": "18:00" }
+}
+```
+
+### Tests
+
+```bash
+pip install -r requirements.txt
+pytest
+```
