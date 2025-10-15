@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart AI Trip Planner</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Smart AI Trip Planner</h1>
+    <form id="plan-form">
+      <div class="row">
+        <label>City <input name="city" required placeholder="Paris"></label>
+        <label>Start Date <input type="date" name="start_date" required></label>
+        <label>End Date <input type="date" name="end_date" required></label>
+      </div>
+      <div class="row">
+        <label>Pace
+          <select name="pace">
+            <option value="relaxed">Relaxed</option>
+            <option value="balanced" selected>Balanced</option>
+            <option value="packed">Packed</option>
+          </select>
+        </label>
+        <label>Start Time <input type="time" name="start_time" value="09:00"></label>
+        <label>End Time <input type="time" name="end_time" value="18:00"></label>
+      </div>
+      <div class="row">
+        <label>Categories
+          <select name="categories" multiple size="3">
+            <option value="landmark" selected>landmark</option>
+            <option value="museum" selected>museum</option>
+            <option value="park" selected>park</option>
+          </select>
+        </label>
+      </div>
+      <div class="row">
+        <button type="submit">Plan Trip</button>
+        <button type="button" id="download-ics">Download ICS</button>
+      </div>
+    </form>
+
+    <pre id="output"></pre>
+  </div>
+
+  <script>
+    function parseForm(form) {
+      const fd = new FormData(form);
+      const categories = fd.getAll('categories');
+      const prefs = {
+        categories,
+        pace: fd.get('pace') || 'balanced',
+        start_time: fd.get('start_time') || '09:00',
+        end_time: fd.get('end_time') || '18:00',
+      };
+      return {
+        city: fd.get('city'),
+        start_date: fd.get('start_date'),
+        end_date: fd.get('end_date'),
+        preferences: prefs,
+      };
+    }
+
+    async function plan(body) {
+      const resp = await fetch('/api/plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!resp.ok) throw new Error(await resp.text());
+      return await resp.json();
+    }
+
+    async function planICS(body) {
+      const resp = await fetch('/api/plan.ics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!resp.ok) throw new Error(await resp.text());
+      return await resp.text();
+    }
+
+    document.getElementById('plan-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const body = parseForm(e.target);
+      try {
+        const planData = await plan(body);
+        document.getElementById('output').textContent = JSON.stringify(planData, null, 2);
+      } catch (err) {
+        document.getElementById('output').textContent = String(err);
+      }
+    });
+
+    document.getElementById('download-ics').addEventListener('click', async () => {
+      const form = document.getElementById('plan-form');
+      const body = parseForm(form);
+      try {
+        const ics = await planICS(body);
+        const blob = new Blob([ics], { type: 'text/calendar' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'trip.ics';
+        document.body.appendChild(a);
+        a.click();
+        URL.revokeObjectURL(url);
+        a.remove();
+      } catch (err) {
+        alert(String(err));
+      }
+    });
+  </script>
+</body>
+</html>

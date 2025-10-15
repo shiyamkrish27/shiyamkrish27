@@ -1,0 +1,8 @@
+[
+  {"id": "ldn-1", "city": "London", "name": "British Museum", "lat": 51.5194, "lon": -0.1270, "category": "museum", "typical_duration_mins": 120},
+  {"id": "ldn-2", "city": "London", "name": "Tower of London", "lat": 51.5081, "lon": -0.0759, "category": "landmark", "typical_duration_mins": 120},
+  {"id": "ldn-3", "city": "London", "name": "Hyde Park", "lat": 51.5073, "lon": -0.1657, "category": "park", "typical_duration_mins": 90},
+  {"id": "par-1", "city": "Paris", "name": "Louvre Museum", "lat": 48.8606, "lon": 2.3376, "category": "museum", "typical_duration_mins": 180},
+  {"id": "par-2", "city": "Paris", "name": "Eiffel Tower", "lat": 48.8584, "lon": 2.2945, "category": "landmark", "typical_duration_mins": 120},
+  {"id": "par-3", "city": "Paris", "name": "Luxembourg Gardens", "lat": 48.8462, "lon": 2.3371, "category": "park", "typical_duration_mins": 60}
+]
